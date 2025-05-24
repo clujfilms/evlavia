@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="ro">
 <head>
-  <meta charset="UTF-8">
-  <title>Admin - Adaugă Predici</title>
+  <meta charset="UTF-8" />
+  <title>Admin - Evlavia</title>
   <script src="main.js" defer></script>
   <style>
     body {
@@ -18,7 +18,7 @@
       text-align: center;
     }
     main {
-      max-width: 600px;
+      max-width: 700px;
       margin: 2rem auto;
       background: white;
       padding: 2rem;
@@ -26,19 +26,20 @@
       box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
     }
     h1 {
-      color: #00796b;
       text-align: center;
-      margin-bottom: 1rem;
+      color: #00796b;
+      margin-bottom: 1.5rem;
     }
     form {
       display: flex;
       flex-direction: column;
+      margin-bottom: 2rem;
     }
-    input[type="text"] {
+    input[type="text"], input[type="password"] {
       padding: 0.8rem;
+      margin-bottom: 1rem;
       border: 1px solid #ccc;
       border-radius: 8px;
-      margin-bottom: 1rem;
       font-size: 1rem;
     }
     button {
@@ -54,26 +55,60 @@
     button:hover {
       background-color: #004d40;
     }
+    .predica-item {
+      background: #e0f2f1;
+      margin: 0.5rem 0;
+      padding: 0.5rem;
+      border-radius: 5px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .predica-item span {
+      flex: 1;
+    }
+    .predica-item button {
+      background: #c62828;
+      padding: 0.4rem 0.6rem;
+      border-radius: 5px;
+      font-size: 0.9rem;
+    }
+    #loginForm, #adminPanel {
+      display: none;
+    }
     footer {
-      margin-top: 2rem;
+      text-align: center;
       background: #263238;
       color: white;
-      text-align: center;
       padding: 1rem;
+      margin-top: 2rem;
     }
   </style>
 </head>
 <body>
   <header>
-    <h2>Admin - Adaugă Predici</h2>
+    <h2>Admin - Evlavia</h2>
   </header>
 
   <main>
-    <h1>Adaugă un link YouTube</h1>
-    <form id="adaugaForm">
-      <input type="text" id="youtubeLink" placeholder="https://www.youtube.com/watch?v=..." required>
-      <button type="submit">Adaugă predica</button>
-    </form>
+    <section id="loginForm">
+      <h1>Autentificare</h1>
+      <form id="authForm">
+        <input type="text" id="username" placeholder="Utilizator" required />
+        <input type="password" id="password" placeholder="Parolă" required />
+        <button type="submit">Login</button>
+      </form>
+    </section>
+
+    <section id="adminPanel">
+      <h1>Adaugă sau șterge predici</h1>
+      <form id="adaugaForm">
+        <input type="text" id="youtubeLink" placeholder="Link YouTube" required />
+        <button type="submit">Adaugă predica</button>
+      </form>
+
+      <div id="listaPredici"></div>
+    </section>
   </main>
 
   <footer>
@@ -81,12 +116,76 @@
   </footer>
 
   <script>
-    document.getElementById("adaugaForm").addEventListener("submit", function(e) {
+    const correctUser = "admin";
+    const correctPass = "parola123";
+
+    const loginForm = document.getElementById("loginForm");
+    const adminPanel = document.getElementById("adminPanel");
+
+    if (sessionStorage.getItem("loggedIn") === "true") {
+      showAdmin();
+    } else {
+      loginForm.style.display = "block";
+    }
+
+    document.getElementById("authForm").addEventListener("submit", e => {
+      e.preventDefault();
+      const user = document.getElementById("username").value;
+      const pass = document.getElementById("password").value;
+
+      if (user === correctUser && pass === correctPass) {
+        sessionStorage.setItem("loggedIn", "true");
+        showAdmin();
+      } else {
+        alert("Date incorecte.");
+      }
+    });
+
+    function showAdmin() {
+      loginForm.style.display = "none";
+      adminPanel.style.display = "block";
+      afiseazaPredici();
+    }
+
+    document.getElementById("adaugaForm").addEventListener("submit", e => {
       e.preventDefault();
       const link = document.getElementById("youtubeLink").value.trim();
       adaugaPredica(link);
-      this.reset();
+      e.target.reset();
     });
+
+    function afiseazaPredici() {
+      const container = document.getElementById("listaPredici");
+      const predici = JSON.parse(localStorage.getItem("predici") || "[]");
+
+      container.innerHTML = "";
+      predici.forEach((link, index) => {
+        const item = document.createElement("div");
+        item.className = "predica-item";
+
+        const span = document.createElement("span");
+        span.textContent = link;
+
+        const btn = document.createElement("button");
+        btn.textContent = "Șterge";
+        btn.onclick = () => {
+          predici.splice(index, 1);
+          localStorage.setItem("predici", JSON.stringify(predici));
+          afiseazaPredici();
+        };
+
+        item.appendChild(span);
+        item.appendChild(btn);
+        container.appendChild(item);
+      });
+    }
+
+    function adaugaPredica(link) {
+      const predici = JSON.parse(localStorage.getItem("predici") || "[]");
+      predici.unshift(link);
+      localStorage.setItem("predici", JSON.stringify(predici));
+      afiseazaPredici();
+    }
   </script>
 </body>
 </html>
