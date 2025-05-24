@@ -3,7 +3,6 @@
 <head>
   <meta charset="UTF-8" />
   <title>Admin - Evlavia</title>
-  <script src="main.js" defer></script>
   <style>
     body {
       font-family: 'Segoe UI', sans-serif;
@@ -121,9 +120,11 @@
 
     const loginForm = document.getElementById("loginForm");
     const adminPanel = document.getElementById("adminPanel");
+    let inactivityTimer;
 
     if (sessionStorage.getItem("loggedIn") === "true") {
       showAdmin();
+      startInactivityTimer();
     } else {
       loginForm.style.display = "block";
     }
@@ -136,6 +137,7 @@
       if (user === correctUser && pass === correctPass) {
         sessionStorage.setItem("loggedIn", "true");
         showAdmin();
+        startInactivityTimer();
       } else {
         alert("Date incorecte.");
       }
@@ -146,6 +148,32 @@
       adminPanel.style.display = "block";
       afiseazaPredici();
     }
+
+    function logout() {
+      sessionStorage.removeItem("loggedIn");
+      location.reload();
+    }
+
+    // Logout după 5 minute de inactivitate
+    function startInactivityTimer() {
+      const timeout = 5 * 60 * 1000; // 5 minute
+      resetInactivityTimer();
+
+      window.addEventListener("mousemove", resetInactivityTimer);
+      window.addEventListener("keydown", resetInactivityTimer);
+      window.addEventListener("scroll", resetInactivityTimer);
+      window.addEventListener("click", resetInactivityTimer);
+
+      function resetInactivityTimer() {
+        clearTimeout(inactivityTimer);
+        inactivityTimer = setTimeout(logout, timeout);
+      }
+    }
+
+    // Logout dacă utilizatorul părăsește pagina
+    window.addEventListener("beforeunload", () => {
+      sessionStorage.removeItem("loggedIn");
+    });
 
     document.getElementById("adaugaForm").addEventListener("submit", e => {
       e.preventDefault();
