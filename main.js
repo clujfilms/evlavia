@@ -1,52 +1,61 @@
 // main.js
 
-// Load and display sermons in resurse.html
-function loadSermons() {
-  const sermons = JSON.parse(localStorage.getItem("sermons") || "[]");
-  const container = document.getElementById("sermon-list");
-  if (!container) return;
-  container.innerHTML = "";
-
-  if (sermons.length === 0) {
-    container.innerHTML = "<p>Nu există predici adăugate momentan.</p>";
-  } else {
-    sermons.reverse().forEach((sermon, index) => {
-      const div = document.createElement("div");
-      div.className = "video";
-      div.innerHTML = `
-        <h3>${sermon.title}</h3>
-        <iframe src="https://www.youtube.com/embed/${sermon.videoId}" allowfullscreen></iframe>
-      `;
-      container.appendChild(div);
-    });
-  }
+function esteLinkValid(link) {
+  const regex = /^(https:\/\/)?(www\.)?(youtube\.com\/watch\?v=|youtu\.be\/)[\w-]{11}/;
+  return regex.test(link);
 }
 
-// Add new sermon from admin.html
-function setupAdminForm() {
-  const form = document.getElementById("add-sermon-form");
-  if (!form) return;
+function adaugaPredica(link) {
+  if (!esteLinkValid(link)) {
+    alert("Link YouTube invalid.");
+    return;
+  }
 
-  form.addEventListener("submit", function(e) {
-    e.preventDefault();
-    const title = document.getElementById("sermon-title").value;
-    const link = document.getElementById("sermon-link").value;
-    try {
-      const videoId = new URL(link).searchParams.get("v");
-      if (!videoId) throw new Error();
-      const sermons = JSON.parse(localStorage.getItem("sermons") || "[]");
-      sermons.push({ title, videoId });
-      localStorage.setItem("sermons", JSON.stringify(sermons));
-      document.getElementById("confirm-msg").textContent = "Predică adăugată!";
-      form.reset();
-    } catch {
-      alert("Link YouTube invalid.");
+  let predici = JSON.parse(localStorage.getItem("predici")) || [];
+  predici.push(link);
+  localStorage.setItem("predici", JSON.stringify(predici));
+  alert("Predica a fost adăugată!");
+}
+
+function incarcaPredici(containerId) {
+  let predici = JSON.parse(localStorage.getItem("predici")) || [];
+  let container = document.getElementById(containerId);
+  if (!container) return;
+
+  if (predici.length === 0) {
+    container.innerHTML = "<p>Nu există predici disponibile momentan.</p>";
+    return;
+  }
+
+  container.innerHTML = "";
+  predici.forEach(link => {
+    let embedUrl = transformLinkInEmbed(link);
+    if (embedUrl) {
+      let iframe = document.createElement("iframe");
+      iframe.src = embedUrl;
+      iframe.width = "100%";
+      iframe.height = "315";
+      iframe.frameBorder = "0";
+      iframe.allowFullscreen = true;
+      iframe.style.marginBottom = "20px";
+      container.appendChild(iframe);
     }
   });
 }
 
-// Initialize functionality
-window.addEventListener("DOMContentLoaded", () => {
-  loadSermons();
-  setupAdminForm();
-});
+function transformLinkInEmbed(link) {
+  try {
+    const url = new URL(link);
+    let videoId = "";
+
+    if (url.hostname.includes("youtu.be")) {
+      videoId = url.pathname.split("/")[1];
+    } else if (url.hostname.includes("youtube.com")) {
+      videoId = url.searchParams.get("v");
+    }
+
+    return videoId ? `https://www.youtube.com/embed/${videoId}` : null;
+  } catch {
+    return null;
+  }
+}
