@@ -4,10 +4,56 @@
   <meta charset="UTF-8">
   <title>Resurse - Predici</title>
   <script src="main.js" defer></script>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f4f6f8;
+      color: #333;
+      margin: 0;
+    }
+    header {
+      background: #263238;
+      color: white;
+      padding: 1rem;
+      text-align: center;
+    }
+    h1 {
+      margin: 1.5rem 0;
+      text-align: center;
+      color: #00796b;
+    }
+    #containerPredici {
+      max-width: 900px;
+      margin: auto;
+      padding: 2rem;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    }
+    iframe {
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    footer {
+      margin-top: 2rem;
+      background: #263238;
+      color: white;
+      text-align: center;
+      padding: 1rem;
+    }
+  </style>
 </head>
 <body>
-  <h1>Predici Video</h1>
+  <header>
+    <h2>Resurse - Predici Video</h2>
+  </header>
+
+  <h1>Predici recente</h1>
   <div id="containerPredici">Se încarcă predicile...</div>
+
+  <footer>
+    <p>&copy; 2025 Biserica Evlavia Cluj</p>
+  </footer>
 
   <script>
     window.addEventListener("DOMContentLoaded", () => {
