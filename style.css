@@ -41,3 +41,21 @@ footer {
     bottom: 0;
     width: 100%;
 }
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 100vw;
+  background-image: url("img/biserica.jpg");
+  background-size: cover;
+  background-position: center;
+  filter: brightness(0.3);
+  z-index: -1;
+}
+
+body {
+  position: relative;
+  z-index: 0;
+}
