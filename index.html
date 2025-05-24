@@ -1,31 +1,99 @@
 <!DOCTYPE html>
 <html lang="ro">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Biserica Creștină Baptistă Evlavia</title>
-    <link rel="stylesheet" href="css/style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Biserica Creștină Baptistă Evlavia</title>
+  <style>
+    * {
+      margin: 0; padding: 0; box-sizing: border-box;
+    }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f4f6f8;
+      color: #333;
+    }
+    header {
+      background: #263238;
+      color: white;
+      padding: 1rem;
+      text-align: center;
+    }
+    nav {
+      margin-top: 1rem;
+    }
+    nav a {
+      color: white;
+      margin: 0 1rem;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    nav a:hover {
+      text-decoration: underline;
+    }
+    main {
+      padding: 2rem;
+      text-align: center;
+    }
+    footer {
+      background: #263238;
+      color: white;
+      text-align: center;
+      padding: 1rem;
+      position: relative;
+      bottom: 0;
+      width: 100%;
+      margin-top: 2rem;
+    }
+    section {
+      margin: 2rem auto;
+      max-width: 900px;
+      background: white;
+      padding: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    input, textarea, button {
+      display: block;
+      width: 100%;
+      padding: 0.5rem;
+      margin: 1rem 0;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    button {
+      background-color: #00796b;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #004d40;
+    }
+  </style>
 </head>
 <body>
-    <header>
-        <h1>Biserica Creștină Baptistă Evlavia</h1>
-        <nav>
-            <ul>
-                <li><a href="index.html">Acasă</a></li>
-                <li><a href="despre.html">Despre</a></li>
-                <li><a href="program.html">Program</a></li>
-                <li><a href="resurse.html">Resurse</a></li>
-                <li><a href="contact.html">Contact</a></li>
-            </ul>
-        </nav>
-    </header>
-    <main>
-        <h2>Bine ați venit!</h2>
-        <p>Suntem bucuroși că ne vizitați online. Domnul să vă binecuvânteze!</p>
-    </main>
-    <footer>
-        <p>&copy; 2025 Biserica Evlavia Cluj</p>
-    </footer>
-    <script src="js/main.js"></script>
+  <header>
+    <h1>Biserica Creștină Baptistă Evlavia</h1>
+    <nav>
+      <a href="index.html">Acasă</a>
+      <a href="despre.html">Despre</a>
+      <a href="program.html">Program</a>
+      <a href="resurse.html">Resurse</a>
+      <a href="contact.html">Contact</a>
+      <a href="admin.html">Admin</a>
+    </nav>
+  </header>
+  <main>
+    <section>
+      <h2>Bine ați venit!</h2>
+      <p>Suntem bucuroși că ne vizitați online. Domnul să vă binecuvânteze!</p>
+    </section>
+  </main>
+  <footer>
+    <p>&copy; 2025 Biserica Evlavia Cluj</p>
+  </footer>
 </body>
 </html>
+
+<!-- Creez apoi si paginile: despre.html, program.html, resurse.html, contact.html, admin.html in acelasi stil. -->
