@@ -2,90 +2,17 @@
 <html lang="ro">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Resurse - Biserica Evlavia</title>
-  <link rel="stylesheet" href="index.html">
-  <style>
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      background: #f4f6f8;
-      color: #333;
-      animation: fadeIn 1s ease-in;
-    }
-    header {
-      background: #263238;
-      color: white;
-      padding: 1rem;
-      text-align: center;
-    }
-    nav {
-      margin-top: 1rem;
-    }
-    nav a {
-      display: inline-block;
-      margin: 0.5rem;
-      padding: 0.75rem 1.5rem;
-      background: #00796b;
-      color: white;
-      text-decoration: none;
-      border-radius: 8px;
-    }
-    nav a:hover {
-      background: #004d40;
-    }
-    main {
-      padding: 2rem;
-      max-width: 900px;
-      margin: 0 auto;
-    }
-    section {
-      background: white;
-      padding: 2rem;
-      border-radius: 12px;
-      box-shadow: 0 6px 12px rgba(0,0,0,0.1);
-    }
-    .video {
-      margin-bottom: 1rem;
-    }
-    iframe {
-      width: 100%;
-      height: 300px;
-      border: none;
-    }
-    footer {
-      background: #263238;
-      color: white;
-      text-align: center;
-      padding: 1rem;
-      margin-top: 2rem;
-    }
-  </style>
+  <title>Resurse - Predici</title>
+  <script src="main.js" defer></script>
 </head>
 <body>
-  <header>
-    <h1>Biserica Creștină Baptistă Evlavia</h1>
-    <nav>
-      <a href="index.html">Acasă</a>
-      <a href="despre.html">Despre</a>
-      <a href="program.html">Program</a>
-      <a href="resurse.html">Resurse</a>
-      <a href="contact.html">Contact</a>
-      <a href="admin.html">Admin</a>
-    </nav>
-  </header>
-  <main>
-    <section>
-      <h2>Predici și resurse video</h2>
-      <div class="video">
-        <iframe src="https://www.youtube.com/embed/YOUTUBE_VIDEO_ID1" allowfullscreen></iframe>
-      </div>
-      <div class="video">
-        <iframe src="https://www.youtube.com/embed/YOUTUBE_VIDEO_ID2" allowfullscreen></iframe>
-      </div>
-    </section>
-  </main>
-  <footer>
-    <p>&copy; 2025 Biserica Evlavia Cluj</p>
-  </footer>
+  <h1>Predici Video</h1>
+  <div id="containerPredici">Se încarcă predicile...</div>
+
+  <script>
+    window.addEventListener("DOMContentLoaded", () => {
+      incarcaPredici("containerPredici");
+    });
+  </script>
 </body>
 </html>
