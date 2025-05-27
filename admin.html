@@ -100,15 +100,16 @@
     import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
     import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-    const firebaseConfig = {
-      apiKey: "YOUR_API_KEY",
-      authDomain: "YOUR_AUTH_DOMAIN",
-      projectId: "YOUR_PROJECT_ID",
-      storageBucket: "YOUR_STORAGE_BUCKET",
-      messagingSenderId: "YOUR_MSG_ID",
-      appId: "YOUR_APP_ID"
-    };
-
+   const firebaseConfig = {
+  apiKey: "AIzaSyCHHreJKNeTe7rdeHgN9wfCQFOvQJYMOEE",
+  authDomain: "evlavia.firebaseapp.com",
+  databaseURL: "https://evlavia-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "evlavia",
+  storageBucket: "evlavia.firebasestorage.app",
+  messagingSenderId: "45584336554",
+  appId: "1:45584336554:web:eb59effd5cbc38405c32d3",
+  measurementId: "G-QTK72ZJG5E"
+};
     const app = initializeApp(firebaseConfig);
     const auth = getAuth();
     const db = getFirestore();
