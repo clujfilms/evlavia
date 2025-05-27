@@ -132,6 +132,8 @@
     const loginSection = document.getElementById("loginSection");
     const adminPanel = document.getElementById("adminPanel");
     const listaPredici = document.getElementById("listaPredici");
+    const emailInput = document.getElementById("email");
+    const passwordInput = document.getElementById("password");
 
     function convertToEmbed(link) {
       try {
@@ -157,13 +159,15 @@
       } else {
         loginSection.classList.remove("hidden");
         adminPanel.classList.add("hidden");
+        clearLoginFields();
+        stopInactivityTimer();
       }
     });
 
     document.getElementById("loginForm").addEventListener("submit", async e => {
       e.preventDefault();
-      const email = document.getElementById("email").value;
-      const password = document.getElementById("password").value;
+      const email = emailInput.value;
+      const password = passwordInput.value;
       try {
         await signInWithEmailAndPassword(auth, email, password);
       } catch (err) {
@@ -171,7 +175,9 @@
       }
     });
 
-    document.getElementById("logoutBtn").addEventListener("click", () => signOut(auth));
+    document.getElementById("logoutBtn").addEventListener("click", async () => {
+      await signOut(auth);
+    });
 
     document.getElementById("adaugaForm").addEventListener("submit", async e => {
       e.preventDefault();
@@ -205,6 +211,11 @@
       afiseazaPredici();
     };
 
+    function clearLoginFields() {
+      emailInput.value = "";
+      passwordInput.value = "";
+    }
+
     // Logout la ieșirea de pe pagină
     window.addEventListener("beforeunload", async () => {
       await signOut(auth);
@@ -214,8 +225,8 @@
     let inactivityTimer;
     function resetInactivityTimer() {
       clearTimeout(inactivityTimer);
-      inactivityTimer = setTimeout(() => {
-        signOut(auth);
+      inactivityTimer = setTimeout(async () => {
+        await signOut(auth);
         alert("Ai fost delogat din cauza inactivității.");
       }, 180000); // 3 minute
     }
