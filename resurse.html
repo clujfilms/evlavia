@@ -1,85 +1,42 @@
 <!DOCTYPE html>
 <html lang="ro">
 <head>
-  <meta charset="UTF-8">
-  <title>Resurse - Biserica Evlavia</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Resurse - Biserica Creștină Baptistă Evlavia</title>
   <style>
     body {
-      font-family: 'Segoe UI', sans-serif;
-      margin: 0;
-      padding: 0;
-      background: #111;
-      color: white;
-      min-height: 100vh;
-      background-image: url("img/fundal.png");
-      background-size: cover;
-      background-position: center;
-      background-attachment: fixed;
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background-color: #f4f4f4;
     }
-
-    .overlay {
-      background-color: rgba(0, 0, 0, 0.75);
-      min-height: 100vh;
-      padding: 2rem;
-    }
-
-    header {
-      text-align: center;
-      margin-bottom: 2rem;
-    }
-
-    h1 {
-      color: #00bfa5;
-    }
-
     .predica {
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 12px;
-      padding: 1rem;
-      margin-bottom: 1.5rem;
-      backdrop-filter: blur(10px);
+      background: white;
+      margin-bottom: 20px;
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
-
     iframe {
       width: 100%;
-      max-width: 560px;
       height: 315px;
       border: none;
-      border-radius: 8px;
-    }
-
-    footer {
-      text-align: center;
-      padding: 1rem;
-      margin-top: 3rem;
-      background: rgba(0, 0, 0, 0.8);
-      color: #ccc;
-      border-top: 1px solid #333;
+      border-radius: 10px;
     }
   </style>
 </head>
 <body>
-  <div class="overlay">
-    <header>
-      <h1>Predici video</h1>
-      <p>Mesaje ziditoare din Cuvântul lui Dumnezeu</p>
-    </header>
 
-    <main id="listaPredici"></main>
-
-    <footer>
-      &copy; 2025 Biserica Creștină Baptistă Evlavia
-    </footer>
-  </div>
+  <h1>Predici</h1>
+  <div id="prediciContainer"></div>
 
   <!-- Firebase SDK -->
-  <script type="module">
-    // Firebase config
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getFirestore, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js"></script>
 
-const firebaseConfig = {
+  <script>
+    // 🔐 Înlocuiește cu datele tale reale din Firebase
+   const firebaseConfig = {
   apiKey: "AIzaSyCHHreJKNeTe7rdeHgN9wfCQFOvQJYMOEE",
   authDomain: "evlavia.firebaseapp.com",
   databaseURL: "https://evlavia-default-rtdb.europe-west1.firebasedatabase.app",
@@ -90,43 +47,31 @@ const firebaseConfig = {
   measurementId: "G-QTK72ZJG5E"
 };
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
 
-    const listaPredici = document.getElementById("listaPredici");
+    // Obține predicile
+    const container = document.getElementById('prediciContainer');
+    db.collection("predici").get().then((querySnapshot) => {
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        const titlu = data.titlu || "Fără titlu";
+        const link = data.link;
 
-    async function incarcaPredici() {
-      const prediciRef = collection(db, "predici");
-      const snapshot = await getDocs(query(prediciRef, orderBy("createdAt", "desc")));
+        const div = document.createElement('div');
+        div.className = 'predica';
 
-      if (snapshot.empty) {
-        listaPredici.innerHTML = "<p>Nu există predici disponibile momentan.</p>";
-        return;
-      }
-
-      snapshot.forEach(doc => {
-        const link = doc.data().link;
-        const iframe = document.createElement("iframe");
-        iframe.src = transformLink(link);
-
-        const container = document.createElement("div");
-        container.className = "predica";
-        container.appendChild(iframe);
-        listaPredici.appendChild(container);
+        div.innerHTML = `
+          <h2>${titlu}</h2>
+          <iframe src="${link}" allowfullscreen></iframe>
+        `;
+        container.appendChild(div);
       });
-    }
-
-    function transformLink(link) {
-      try {
-        const url = new URL(link);
-        const videoId = url.searchParams.get("v");
-        return `https://www.youtube.com/embed/${videoId}`;
-      } catch {
-        return "";
-      }
-    }
-
-    incarcaPredici();
+    }).catch((error) => {
+      container.innerHTML = "Eroare la încărcarea predicilor: " + error;
+    });
   </script>
+
 </body>
 </html>
