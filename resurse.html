@@ -46,21 +46,39 @@
   </style>
 </head>
 <body>
-  <header>
-    <h2>Resurse - Predici Video</h2>
-  </header>
+ <script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-app.js";
+  import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-firestore.js";
 
-  <h1>Predici recente</h1>
-  <div id="containerPredici">Se încarcă predicile...</div>
+  const firebaseConfig = {
+    // aceeași config
+  };
 
-  <footer>
-    <p>&copy; 2025 Biserica Evlavia Cluj</p>
-  </footer>
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
 
-  <script>
-    window.addEventListener("DOMContentLoaded", () => {
-      incarcaPredici("containerPredici");
+  const prediciContainer = document.getElementById("listaPredici");
+
+  async function afiseazaPredici() {
+    const querySnapshot = await getDocs(collection(db, "predici"));
+    querySnapshot.forEach((doc) => {
+      const data = doc.data();
+      prediciContainer.innerHTML += `
+        <div>
+          <h3>${data.titlu}</h3>
+          <a href="${data.link}" target="_blank">${data.link}</a>
+        </div>`;
     });
+  }
+
+  afiseazaPredici();
+</script>
+
+<body>
+  <h2>Resurse video</h2>
+  <div id="listaPredici"></div>
+</body>
+
   </script>
 </body>
 </html>
