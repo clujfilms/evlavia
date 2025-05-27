@@ -66,6 +66,19 @@
       justify-content: space-between;
     }
     .hidden { display: none; }
+    nav {
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    nav a, nav button {
+      margin-right: 15px;
+      text-decoration: none;
+      color: #00796b;
+      background: none;
+      border: none;
+      font-size: 1rem;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
@@ -83,8 +96,16 @@
     </section>
 
     <section id="adminPanel" class="hidden">
+      <!-- Navigare și logout -->
+      <nav>
+        <a href="index.html">Acasă</a>
+        <a href="resurse.html">Resurse</a>
+        <button id="logoutBtn">Logout</button>
+      </nav>
+
       <h1>Adaugă predici</h1>
       <form id="adaugaForm">
+        <input type="text" id="youtubeTitlu" placeholder="Titlu predică" required />
         <input type="text" id="youtubeLink" placeholder="Link YouTube" required />
         <button type="submit">Adaugă</button>
       </form>
@@ -100,16 +121,17 @@
     import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
     import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-   const firebaseConfig = {
-  apiKey: "AIzaSyCHHreJKNeTe7rdeHgN9wfCQFOvQJYMOEE",
-  authDomain: "evlavia.firebaseapp.com",
-  databaseURL: "https://evlavia-default-rtdb.europe-west1.firebasedatabase.app",
-  projectId: "evlavia",
-  storageBucket: "evlavia.firebasestorage.app",
-  messagingSenderId: "45584336554",
-  appId: "1:45584336554:web:eb59effd5cbc38405c32d3",
-  measurementId: "G-QTK72ZJG5E"
-};
+    const firebaseConfig = {
+      apiKey: "AIzaSyCHHreJKNeTe7rdeHgN9wfCQFOvQJYMOEE",
+      authDomain: "evlavia.firebaseapp.com",
+      databaseURL: "https://evlavia-default-rtdb.europe-west1.firebasedatabase.app",
+      projectId: "evlavia",
+      storageBucket: "evlavia.firebasestorage.app",
+      messagingSenderId: "45584336554",
+      appId: "1:45584336554:web:eb59effd5cbc38405c32d3",
+      measurementId: "G-QTK72ZJG5E"
+    };
+
     const app = initializeApp(firebaseConfig);
     const auth = getAuth();
     const db = getFirestore();
@@ -144,16 +166,26 @@
       }
     });
 
+    // ✅ Logout
+    document.getElementById("logoutBtn").addEventListener("click", async () => {
+      try {
+        await signOut(auth);
+      } catch (err) {
+        alert("Eroare la delogare: " + err.message);
+      }
+    });
+
     async function afiseazaPredici() {
       const container = document.getElementById("listaPredici");
       container.innerHTML = "";
       const snapshot = await getDocs(collection(db, "predici"));
       snapshot.forEach(docSnap => {
+        const data = docSnap.data();
         const div = document.createElement("div");
         div.className = "predica-item";
 
         const span = document.createElement("span");
-        span.textContent = docSnap.data().link;
+        span.textContent = data.titlu || data.link || "Predică fără titlu";
 
         const btn = document.createElement("button");
         btn.textContent = "Șterge";
@@ -171,8 +203,9 @@
     document.getElementById("adaugaForm").addEventListener("submit", async e => {
       e.preventDefault();
       const link = document.getElementById("youtubeLink").value.trim();
-      if (link) {
-        await addDoc(collection(db, "predici"), { link });
+      const titlu = document.getElementById("youtubeTitlu").value.trim();
+      if (link && titlu) {
+        await addDoc(collection(db, "predici"), { link, titlu });
         document.getElementById("adaugaForm").reset();
         afiseazaPredici();
       }
