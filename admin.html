@@ -1,20 +1,16 @@
-<!-- admin.html -->
 <!DOCTYPE html>
 <html lang="ro">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Admin - Evlavia</title>
-  <script type="module" src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"></script>
-  <script type="module" src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js"></script>
-  <script type="module" src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
   <style>
     body {
       font-family: 'Inter', sans-serif;
-      background: #f0f4f8;
       margin: 0;
       padding: 0;
+      background: #f0f4f8;
       display: flex;
       flex-direction: column;
       min-height: 100vh;
@@ -27,57 +23,54 @@
     }
     main {
       flex: 1;
-      padding: 2rem;
       max-width: 600px;
-      margin: auto;
+      margin: 2rem auto;
       background: white;
+      padding: 2rem;
       border-radius: 12px;
       box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-    }
-    h1 {
-      color: #004d40;
-      text-align: center;
     }
     form {
       display: flex;
       flex-direction: column;
       gap: 1rem;
     }
-    input {
+    input, button {
       padding: 0.8rem;
-      border: 1px solid #ccc;
       border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 1rem;
     }
     button {
       background: #00796b;
       color: white;
       border: none;
-      padding: 0.8rem;
-      border-radius: 8px;
       cursor: pointer;
       font-weight: bold;
+    }
+    .hidden {
+      display: none;
     }
     .predica-item {
       background: #e0f2f1;
       padding: 0.5rem;
-      border-radius: 6px;
       margin-bottom: 0.5rem;
+      border-radius: 6px;
       display: flex;
       justify-content: space-between;
     }
-    .hidden { display: none; }
     nav {
-      margin-bottom: 20px;
+      margin-bottom: 1rem;
       text-align: center;
     }
     nav a, nav button {
       margin-right: 15px;
-      text-decoration: none;
-      color: #00796b;
       background: none;
       border: none;
-      font-size: 1rem;
+      color: #00796b;
+      text-decoration: none;
       cursor: pointer;
+      font-size: 1rem;
     }
   </style>
 </head>
@@ -85,18 +78,18 @@
   <header>
     <h2>Admin - Evlavia</h2>
   </header>
+
   <main>
     <section id="loginSection">
       <h1>Autentificare</h1>
       <form id="loginForm">
-        <input type="email" id="email" placeholder="Email" required>
-        <input type="password" id="password" placeholder="Parolă" required>
+        <input type="email" id="email" placeholder="Email" required />
+        <input type="password" id="password" placeholder="Parolă" required />
         <button type="submit">Autentifică-te</button>
       </form>
     </section>
 
     <section id="adminPanel" class="hidden">
-      <!-- Navigare și logout -->
       <nav>
         <a href="index.html">Acasă</a>
         <a href="resurse.html">Resurse</a>
@@ -109,9 +102,11 @@
         <input type="text" id="youtubeLink" placeholder="Link YouTube" required />
         <button type="submit">Adaugă</button>
       </form>
+
       <div id="listaPredici"></div>
     </section>
   </main>
+
   <footer>
     <p>&copy; 2025 Biserica Creștină Baptistă Evlavia</p>
   </footer>
@@ -124,12 +119,10 @@
     const firebaseConfig = {
       apiKey: "AIzaSyCHHreJKNeTe7rdeHgN9wfCQFOvQJYMOEE",
       authDomain: "evlavia.firebaseapp.com",
-      databaseURL: "https://evlavia-default-rtdb.europe-west1.firebasedatabase.app",
       projectId: "evlavia",
-      storageBucket: "evlavia.firebasestorage.app",
+      storageBucket: "evlavia.appspot.com",
       messagingSenderId: "45584336554",
-      appId: "1:45584336554:web:eb59effd5cbc38405c32d3",
-      measurementId: "G-QTK72ZJG5E"
+      appId: "1:45584336554:web:eb59effd5cbc38405c32d3"
     };
 
     const app = initializeApp(firebaseConfig);
@@ -138,21 +131,33 @@
 
     const loginSection = document.getElementById("loginSection");
     const adminPanel = document.getElementById("adminPanel");
+    const listaPredici = document.getElementById("listaPredici");
 
-    const showAdmin = () => {
-      loginSection.classList.add("hidden");
-      adminPanel.classList.remove("hidden");
-      afiseazaPredici();
-    };
-
-    const hideAdmin = () => {
-      loginSection.classList.remove("hidden");
-      adminPanel.classList.add("hidden");
-    };
+    function convertToEmbed(link) {
+      try {
+        const url = new URL(link);
+        if (url.hostname.includes("youtu.be")) {
+          return `https://www.youtube.com/embed/${url.pathname.slice(1)}`;
+        }
+        if (url.hostname.includes("youtube.com") && url.searchParams.get("v")) {
+          return `https://www.youtube.com/embed/${url.searchParams.get("v")}`;
+        }
+      } catch {
+        return link;
+      }
+      return link;
+    }
 
     onAuthStateChanged(auth, user => {
-      if (user) showAdmin();
-      else hideAdmin();
+      if (user) {
+        loginSection.classList.add("hidden");
+        adminPanel.classList.remove("hidden");
+        afiseazaPredici();
+        startInactivityTimer();
+      } else {
+        loginSection.classList.remove("hidden");
+        adminPanel.classList.add("hidden");
+      }
     });
 
     document.getElementById("loginForm").addEventListener("submit", async e => {
@@ -162,54 +167,70 @@
       try {
         await signInWithEmailAndPassword(auth, email, password);
       } catch (err) {
-        alert("Autentificare eșuată: " + err.message);
+        alert("Eroare autentificare: " + err.message);
       }
     });
 
-    // ✅ Logout
-    document.getElementById("logoutBtn").addEventListener("click", async () => {
-      try {
-        await signOut(auth);
-      } catch (err) {
-        alert("Eroare la delogare: " + err.message);
+    document.getElementById("logoutBtn").addEventListener("click", () => signOut(auth));
+
+    document.getElementById("adaugaForm").addEventListener("submit", async e => {
+      e.preventDefault();
+      const titlu = document.getElementById("youtubeTitlu").value.trim();
+      const linkRaw = document.getElementById("youtubeLink").value.trim();
+      const link = convertToEmbed(linkRaw);
+      if (titlu && link) {
+        await addDoc(collection(db, "predici"), { titlu, link });
+        document.getElementById("adaugaForm").reset();
+        afiseazaPredici();
       }
     });
 
     async function afiseazaPredici() {
-      const container = document.getElementById("listaPredici");
-      container.innerHTML = "";
+      listaPredici.innerHTML = "";
       const snapshot = await getDocs(collection(db, "predici"));
       snapshot.forEach(docSnap => {
         const data = docSnap.data();
         const div = document.createElement("div");
         div.className = "predica-item";
-
-        const span = document.createElement("span");
-        span.textContent = data.titlu || data.link || "Predică fără titlu";
-
-        const btn = document.createElement("button");
-        btn.textContent = "Șterge";
-        btn.onclick = async () => {
-          await deleteDoc(doc(db, "predici", docSnap.id));
-          afiseazaPredici();
-        };
-
-        div.appendChild(span);
-        div.appendChild(btn);
-        container.appendChild(div);
+        div.innerHTML = `
+          <span>${data.titlu}</span>
+          <button onclick="stergePredica('${docSnap.id}')">Șterge</button>
+        `;
+        listaPredici.appendChild(div);
       });
     }
 
-    document.getElementById("adaugaForm").addEventListener("submit", async e => {
-      e.preventDefault();
-      const link = document.getElementById("youtubeLink").value.trim();
-      const titlu = document.getElementById("youtubeTitlu").value.trim();
-      if (link && titlu) {
-        await addDoc(collection(db, "predici"), { link, titlu });
-        document.getElementById("adaugaForm").reset();
-        afiseazaPredici();
-      }
+    window.stergePredica = async (id) => {
+      await deleteDoc(doc(db, "predici", id));
+      afiseazaPredici();
+    };
+
+    // Logout la ieșirea de pe pagină
+    window.addEventListener("beforeunload", async () => {
+      await signOut(auth);
     });
+
+    // Timer inactivitate
+    let inactivityTimer;
+    function resetInactivityTimer() {
+      clearTimeout(inactivityTimer);
+      inactivityTimer = setTimeout(() => {
+        signOut(auth);
+        alert("Ai fost delogat din cauza inactivității.");
+      }, 180000); // 3 minute
+    }
+
+    function startInactivityTimer() {
+      ['mousemove', 'keydown', 'click'].forEach(event =>
+        document.addEventListener(event, resetInactivityTimer));
+      resetInactivityTimer();
+    }
+
+    function stopInactivityTimer() {
+      clearTimeout(inactivityTimer);
+      ['mousemove', 'keydown', 'click'].forEach(event =>
+        document.removeEventListener(event, resetInactivityTimer));
+    }
   </script>
 </body>
 </html>
