@@ -1,84 +1,130 @@
 <!DOCTYPE html>
 <html lang="ro">
 <head>
-  <body class="no-bg">
-
   <meta charset="UTF-8">
-  <title>Resurse - Predici</title>
-  <script src="main.js" defer></script>
+  <title>Resurse - Biserica Evlavia</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
     body {
       font-family: 'Segoe UI', sans-serif;
-      background: #f4f6f8;
-      color: #333;
       margin: 0;
-    }
-    header {
-      background: #263238;
+      padding: 0;
+      background: #111;
       color: white;
-      padding: 1rem;
-      text-align: center;
+      min-height: 100vh;
+      background-image: url("img/fundal.png");
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
     }
-    h1 {
-      margin: 1.5rem 0;
-      text-align: center;
-      color: #00796b;
-    }
-    #containerPredici {
-      max-width: 900px;
-      margin: auto;
+
+    .overlay {
+      background-color: rgba(0, 0, 0, 0.75);
+      min-height: 100vh;
       padding: 2rem;
-      background: white;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    h1 {
+      color: #00bfa5;
+    }
+
+    .predica {
+      background: rgba(255, 255, 255, 0.1);
       border-radius: 12px;
-      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+      padding: 1rem;
+      margin-bottom: 1.5rem;
+      backdrop-filter: blur(10px);
     }
+
     iframe {
+      width: 100%;
+      max-width: 560px;
+      height: 315px;
+      border: none;
       border-radius: 8px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
     }
+
     footer {
-      margin-top: 2rem;
-      background: #263238;
-      color: white;
       text-align: center;
       padding: 1rem;
+      margin-top: 3rem;
+      background: rgba(0, 0, 0, 0.8);
+      color: #ccc;
+      border-top: 1px solid #333;
     }
   </style>
 </head>
 <body>
- <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-app.js";
-  import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-firestore.js";
+  <div class="overlay">
+    <header>
+      <h1>Predici video</h1>
+      <p>Mesaje ziditoare din Cuvântul lui Dumnezeu</p>
+    </header>
 
-  const firebaseConfig = {
-    // aceeași config
-  };
+    <main id="listaPredici"></main>
 
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
+    <footer>
+      &copy; 2025 Biserica Creștină Baptistă Evlavia
+    </footer>
+  </div>
 
-  const prediciContainer = document.getElementById("listaPredici");
+  <!-- Firebase SDK -->
+  <script type="module">
+    // Firebase config
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getFirestore, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-  async function afiseazaPredici() {
-    const querySnapshot = await getDocs(collection(db, "predici"));
-    querySnapshot.forEach((doc) => {
-      const data = doc.data();
-      prediciContainer.innerHTML += `
-        <div>
-          <h3>${data.titlu}</h3>
-          <a href="${data.link}" target="_blank">${data.link}</a>
-        </div>`;
-    });
-  }
+    const firebaseConfig = {
+      apiKey: "API_KEY_TAU",
+      authDomain: "PROIECT.firebaseapp.com",
+      projectId: "PROIECT",
+      storageBucket: "PROIECT.appspot.com",
+      messagingSenderId: "XXXXXXXXXXXX",
+      appId: "APP_ID_TAU"
+    };
 
-  afiseazaPredici();
-</script>
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
 
-<body>
-  <h2>Resurse video</h2>
-  <div id="listaPredici"></div>
-</body>
+    const listaPredici = document.getElementById("listaPredici");
 
+    async function incarcaPredici() {
+      const prediciRef = collection(db, "predici");
+      const snapshot = await getDocs(query(prediciRef, orderBy("createdAt", "desc")));
+
+      if (snapshot.empty) {
+        listaPredici.innerHTML = "<p>Nu există predici disponibile momentan.</p>";
+        return;
+      }
+
+      snapshot.forEach(doc => {
+        const link = doc.data().link;
+        const iframe = document.createElement("iframe");
+        iframe.src = transformLink(link);
+
+        const container = document.createElement("div");
+        container.className = "predica";
+        container.appendChild(iframe);
+        listaPredici.appendChild(container);
+      });
+    }
+
+    function transformLink(link) {
+      try {
+        const url = new URL(link);
+        const videoId = url.searchParams.get("v");
+        return `https://www.youtube.com/embed/${videoId}`;
+      } catch {
+        return "";
+      }
+    }
+
+    incarcaPredici();
   </script>
 </body>
 </html>
