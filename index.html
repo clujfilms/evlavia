@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Evlavia – Acasă</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+ --c1:#ffffff; --c2:#f5f7fa; --c3:#00796b; --c4:#004d40;
+}
+*{margin:0;padding:0;box-sizing:border-box;font-family:Inter,sans-serif}
+body{background:var(--c2);color:#333}
+h1{font-size:1.8rem;color:#fff}
+header{background:#263238;padding:1rem;text-align:center;box-shadow:0 4px 8px rgba(0,0,0,.25)}
+nav{margin-top:.5rem}
+nav a{display:inline-block;margin:.25rem;background:var(--c3);color:#fff;
+      padding:.5rem 1rem;border-radius:8px;text-decoration:none;font-weight:600;transition:.2s}
+nav a:hover{background:var(--c4)}
+main{max-width:1040px;margin:auto;padding:1.75rem}
+.card{background:var(--c1);border-radius:16px;box-shadow:0 6px 16px rgba(0,0,0,.08);padding:1.5rem;margin-bottom:2rem}
+.card h3{color:var(--c3);margin:.6rem 0}
+.card img{width:100%;border-radius:12px;margin-bottom:1rem}
+iframe{width:100%;aspect-ratio:16/9;border:0;border-radius:12px}
+footer{text-align:center;background:#263238;color:#fff;padding:1rem;margin-top:3rem}
+</style>
+</head>
+<body>
+<header>
+  <h1>Biserica Creștină Baptistă Evlavia</h1>
+  <nav>
+    <a href="index.html">Acasă</a><a href="program.html">Program</a>
+    <a href="resurse.html">Resurse</a><a href="contact.html">Contact</a>
+    <a href="admin.html">Admin</a>
+  </nav>
+</header>
+
+<main>
+  <!-- LIVE -->
+  <section id="live" class="card"><h3>Transmisiune LIVE</h3><div id="liveFrame"></div></section>
+
+  <!-- ANUNŢURI -->
+  <section id="announcements"></section>
+</main>
+
+<footer>&copy; 2025 Biserica Evlavia Cluj</footer>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, doc, getDoc, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+/* 🔗 Config Firebase  — exact ce ai cerut */
+const firebaseConfig = {
+  apiKey: "AIzaSyCHHreJKNeTe7rdeHgN9wfCQFOvQJYMOEE",
+  authDomain: "evlavia.firebaseapp.com",
+  projectId: "evlavia",
+  storageBucket: "evlavia.appspot.com",
+  messagingSenderId: "45584336554",
+  appId: "1:45584336554:web:eb59effd5cbc38405c32d3"
+};
+
+
+/* Init */
+const app = initializeApp(firebaseConfig);
+const db  = getFirestore(app);
+
+/* LIVE */
+(async () => {
+  const snap = await getDoc(doc(db, "config", "live"));
+  if (snap.exists()) {
+    const url = snap.data().url || "";
+    document.getElementById("liveFrame").innerHTML =
+      `<iframe src="${url.includes("embed") ? url :
+        url.replace("watch?v=", "embed/").replace("youtu.be/", "www.youtube.com/embed/")}"
+        allowfullscreen></iframe>`;
+  }
+})();
+
+/* ANUNŢURI */
+(async () => {
+  const wrap = document.getElementById("announcements");
+  const q    = query(collection(db, "anunturi"), orderBy("timestamp", "desc"));
+  const snap = await getDocs(q);
+
+  if (snap.empty) {
+    wrap.innerHTML = "<p style='text-align:center'>Nu există anunţuri.</p>";
+    return;
+  }
+  snap.forEach(d => {
+    const { title, description, imageUrl } = d.data();
+    wrap.insertAdjacentHTML("beforeend", `
+      <article class="card">
+        <img src="${imageUrl}" alt="anunț">
+        <h3>${title}</h3>
+        <p>${description}</p>
+      </article>`);
+  });
+})();
+</script>
+</body>
+</html>

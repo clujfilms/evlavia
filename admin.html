@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin - Biserica Evlavia</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #111;
+      color: #fff;
+      padding: 2rem;
+    }
+
+    form {
+      max-width: 600px;
+      margin: auto;
+      background: #222;
+      padding: 2rem;
+      border-radius: 8px;
+    }
+
+    label, input, textarea, button {
+      display: block;
+      width: 100%;
+      margin-bottom: 1rem;
+    }
+
+    input, textarea {
+      background: #333;
+      border: 1px solid #555;
+      color: #fff;
+      padding: 0.5rem;
+    }
+
+    button {
+      background: #007bff;
+      border: none;
+      color: white;
+      padding: 0.75rem;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    button:hover {
+      background: #0056b3;
+    }
+
+    #status {
+      margin-top: 1rem;
+      padding: 0.75rem;
+      border-radius: 4px;
+      display: none;
+    }
+
+    .success {
+      background-color: #28a745;
+    }
+
+    .error {
+      background-color: #dc3545;
+    }
+  </style>
+</head>
+<body>
+  <h1>Adaugă o predică</h1>
+  <form id="sermonForm">
+    <label for="title">Titlu predică</label>
+    <input type="text" id="title" required />
+
+    <label for="date">Data</label>
+    <input type="date" id="date" required />
+
+    <label for="link">Link YouTube</label>
+    <input type="url" id="link" required />
+
+    <button type="submit">Publică</button>
+    <div id="status"></div>
+  </form>
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+  <script>
+    // 🔐 Înlocuiește cu datele tale reale din Firebase
+    const firebaseConfig = {
+      apiKey: "API_KEY_TAU",
+      authDomain: "PROIECT_TAU.firebaseapp.com",
+      databaseURL: "https://PROIECT_TAU.firebaseio.com",
+      projectId: "PROIECT_TAU",
+      storageBucket: "PROIECT_TAU.appspot.com",
+      messagingSenderId: "SENDER_ID",
+      appId: "APP_ID"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    const form = document.getElementById('sermonForm');
+    const statusDiv = document.getElementById('status');
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      const title = document.getElementById('title').value.trim();
+      const date = document.getElementById('date').value;
+      const link = document.getElementById('link').value.trim();
+
+      if (!title || !date || !link) {
+        showMessage('Toate câmpurile sunt obligatorii.', false);
+        return;
+      }
+
+      const sermon = {
+        title,
+        date,
+        link
+      };
+
+      db.ref('predici').push(sermon)
+        .then(() => {
+          showMessage('Predica a fost publicată cu succes!', true);
+          form.reset();
+        })
+        .catch((error) => {
+          console.error(error);
+          showMessage('Eroare la publicare. Încearcă din nou.', false);
+        });
+    });
+
+    function showMessage(message, success) {
+      statusDiv.style.display = 'block';
+      statusDiv.textContent = message;
+      statusDiv.className = success ? 'success' : 'error';
+    }
+  </script>
+</body>
+</html>
