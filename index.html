@@ -2,92 +2,157 @@
 <html lang="ro">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
   <title>Biserica Creștină Baptistă Evlavia</title>
+
+  <!-- Google Font (opțional) -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+
   <style>
-    * {
-      margin: 0; padding: 0; box-sizing: border-box;
+    :root{
+      --bg1:#1e1e2f;
+      --bg2:#2d2d44;
+      --card:#26263a;
+      --primary:#00c7b7;
+      --primary-dark:#00a397;
+      --text:#f1f1f1;
     }
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      background: #f4f6f8;
-      color: #333;
-      animation: fadeIn 1s ease-in;
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{
+      font-family:'Inter',sans-serif;
+      min-height:100vh;
+      background:linear-gradient(135deg,var(--bg1) 0%,var(--bg2) 100%);
+      color:var(--text);
+      animation:fadeIn 0.7s;
     }
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
+    @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+
+    header{
+      text-align:center;
+      padding:1.25rem;
+      background:#181824dd;
+      backdrop-filter:blur(8px);
+      box-shadow:0 6px 14px rgba(0,0,0,.4);
     }
-    header {
-      background: #263238;
-      color: white;
-      padding: 1rem;
-      text-align: center;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    nav{margin-top:.5rem}
+    nav a{
+      color:#181824;
+      background:var(--primary);
+      text-decoration:none;
+      margin:.25rem;
+      padding:.45rem 1rem;
+      border-radius:8px;
+      font-weight:600;
+      transition:.25s;
     }
-    nav {
-      margin-top: 1rem;
+    nav a:hover{background:var(--primary-dark)}
+
+    main{max-width:1000px;margin:auto;padding:2rem 1rem}
+    .welcome{
+      background:#202034aa;
+      padding:2rem;
+      border-radius:16px;
+      text-align:center;
+      box-shadow:0 8px 22px rgba(0,0,0,.35);
+      margin-bottom:2.5rem;
     }
-    nav a {
-      display: inline-block;
-      margin: 0.5rem;
-      padding: 0.75rem 1.5rem;
-      background: #00796b;
-      color: white;
-      text-decoration: none;
-      font-weight: 600;
-      border-radius: 8px;
-      transition: background 0.3s;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+
+    #announcementsContainer .card{
+      background:var(--card);
+      border-radius:16px;
+      padding:1.5rem;
+      margin-bottom:2rem;
+      box-shadow:0 6px 18px rgba(0,0,0,.35);
     }
-    nav a:hover {
-      background: #004d40;
+    .card img{
+      width:100%;
+      height:auto;
+      border-radius:12px;
+      margin-bottom:1rem;
     }
-    main {
-      padding: 2rem;
-      text-align: center;
-    }
-    footer {
-      background: #263238;
-      color: white;
-      text-align: center;
-      padding: 1rem;
-      position: relative;
-      bottom: 0;
-      width: 100%;
-      margin-top: 2rem;
-    }
-    section {
-      margin: 2rem auto;
-      max-width: 900px;
-      background: white;
-      padding: 2rem;
-      border-radius: 12px;
-      box-shadow: 0 6px 12px rgba(0,0,0,0.1);
-      animation: fadeIn 1.2s ease-in;
+    .card h3{color:var(--primary);margin-bottom:0.5rem;font-size:1.25rem}
+    .card p{line-height:1.6}
+
+    footer{
+      text-align:center;
+      padding:1rem;
+      margin-top:3rem;
+      background:#181824dd;
     }
   </style>
 </head>
 <body>
-  <header>
-    <h1>Biserica Creștină Baptistă Evlavia</h1>
-    <nav>
-      <a href="index.html">Acasă</a>
-      <a href="despre.html">Despre</a>
-      <a href="program.html">Program</a>
-      <a href="resurse.html">Resurse</a>
-      <a href="contact.html">Contact</a>
-      <a href="admin.html">Admin</a>
-    </nav>
-  </header>
-  <main>
-    <section>
-      <h2>Bine ați venit!</h2>
-      <p>Suntem bucuroși că ne vizitați online. Domnul să vă binecuvânteze!</p>
-    </section>
-  </main>
-  <footer>
-    <p>&copy; 2025 Biserica Evlavia Cluj</p>
-  </footer>
+
+<header>
+  <h1>Biserica Creștină Baptistă Evlavia</h1>
+  <nav>
+    <a href="index.html">Acasă</a>
+    <a href="despre.html">Despre</a>
+    <a href="program.html">Program</a>
+    <a href="resurse.html">Resurse</a>
+    <a href="contact.html">Contact</a>
+    <a href="admin.html">Admin</a>
+  </nav>
+</header>
+
+<main>
+  <section class="welcome">
+    <h2>Bine ați venit!</h2>
+    <p>Suntem bucuroși că ne vizitați online. Domnul să vă binecuvânteze!</p>
+  </section>
+
+  <section id="announcementsContainer">
+    <!-- card-urile cu anunțuri se umplu din Firestore -->
+  </section>
+</main>
+
+<footer>&copy; 2025 Biserica Evlavia Cluj</footer>
+
+<!-- Firebase SDK (versiunea ES Modules) -->
+<script type="module">
+  import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+  import { getFirestore, collection, getDocs, query, orderBy } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+
+  /* ---------- CONFIG  ---------- */
+  const firebaseConfig = {
+    apiKey: 'AIzaSyCHHreJKNeTe7rdeHgN9wfCQFOvQJYMOEE',
+    authDomain: 'evlavia.firebaseapp.com',
+    projectId: 'evlavia',
+    storageBucket: 'evlavia.appspot.com',
+    messagingSenderId: '45584336554',
+    appId: '1:45584336554:web:eb59effd5cbc38405c32d3'
+  };
+
+  /* ---------- INIT ---------- */
+  const app = initializeApp(firebaseConfig);
+  const db  = getFirestore(app);
+  const container = document.getElementById('announcementsContainer');
+
+  async function loadAnnouncements(){
+    container.innerHTML = '<p>Se încarcă anunțurile…</p>';
+    const q = query(collection(db,'anunturi'), orderBy('timestamp','desc'));
+    const snap = await getDocs(q);
+
+    if (snap.empty){
+      container.innerHTML = '<p style=\"text-align:center\">Momentan nu există anunțuri.</p>';
+      return;
+    }
+
+    container.innerHTML = '';
+    snap.forEach(doc=>{
+      const { title, description, imageUrl } = doc.data();
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.innerHTML = `
+        <img src=\"${imageUrl}\" alt=\"anunț\">
+        <h3>${title}</h3>
+        <p>${description}</p>
+      `;
+      container.appendChild(card);
+    });
+  }
+  loadAnnouncements();
+</script>
+
 </body>
 </html>
